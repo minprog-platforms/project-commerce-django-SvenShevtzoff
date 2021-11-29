@@ -23,6 +23,7 @@ Models used in this application:
 ![Models](design_document/models.jpeg)
 
 Flowchart for this application:
+
 ![Flowchart](design_document/flowchart_commerce.drawio.png)
 
 
