@@ -21,7 +21,7 @@ class NewListingForm(forms.ModelForm):
         }
 
 class NewBidForm(forms.ModelForm):
-    amount = forms.CharField(widget=forms.TextInput(attrs={'placeholder':'Enter amount'}), label="")
+    amount = forms.IntegerField(widget=forms.TextInput(attrs={'placeholder':'Enter amount'}), label="")
 
     class Meta:
         model = Bid
@@ -41,6 +41,14 @@ class NewCommentForm(forms.ModelForm):
         widgets = {
             'comment': forms.Textarea(attrs={'class': 'form-control'})
         }
+
+def get_highest_bid(bids):
+    highest = 0
+    for bid in bids:
+        if bid.amount > int(highest):
+            highest = int(bid.amount)
+    
+    return highest
     
 
 def index(request):
@@ -50,6 +58,7 @@ def index(request):
             form = form.save(commit=False)
             form.user = request.user
             form.save()
+
     return render(request, "auctions/index.html", {
         "listings": Listing.objects.all()
     })
@@ -115,15 +124,21 @@ def create(request):
 
 def listing(request, requested_title):
     context = {}
+    listing = Listing.objects.filter(title=requested_title).first()
+
     if request.method == 'POST':
         if 'bid'in request.POST:
             if request.user.is_authenticated:
                 bid_form = NewBidForm(request.POST, prefix='bid')
                 if bid_form.is_valid():
-                    bid_form = bid_form.save(commit=False)
-                    bid_form.user = request.user
-                    bid_form.listing = Listing.objects.filter(title=requested_title).first()
-                    bid_form.save()
+                    bid = bid_form.cleaned_data["amount"]
+                    if int(bid) > int(listing.starting_bid) and int(bid) > get_highest_bid(listing.bids.all()):
+                        bid_form = bid_form.save(commit=False)
+                        bid_form.user = request.user
+                        bid_form.listing = Listing.objects.filter(title=requested_title).first()
+                        bid_form.save()
+                    else:
+                        context["bid_message"] = "Your bid is not high enough"
             else:
                 context["bid_message"] = "You need to be logged in to place a bid"
 
@@ -140,7 +155,6 @@ def listing(request, requested_title):
 
     context["bid_form"] = NewBidForm(prefix='bid')
     context["comment_form"] = NewCommentForm(prefix='comment')
-    listing = Listing.objects.filter(title=requested_title).first()
     context["listing"] = listing
     context["bids"] = listing.bids.all()
     context["comments"] = listing.comments.all()
