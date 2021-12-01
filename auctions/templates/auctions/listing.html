@@ -1,0 +1,41 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="bodydiv">
+    <h2>{{ listing.title }}</h2>
+    <hr>
+    <div class= "row">
+        <div class="col-5">
+            {{ listing.description }}
+        </div>
+        <div class="col-3">
+            <div class="bidding-div">
+                <div class="bidding-div-header">
+                    Biddings:
+                </div>
+                <div class="bidding-div-body">
+                    {% for bid in bids %}
+                        <p>{{ bid.user }}: {{ bid.amount }}</p>
+                    {% endfor %}
+                </div>
+                <div class="bidding-place-bid">
+                    <form action="{% url 'listing' listing.title %}" method="POST">
+                        <div class="row">
+                            <div class="col-8">
+                                {% csrf_token %}
+                                {{ bid_form }}
+                            </div>
+                            <div class="col-4">
+                                <button type="submit" class="btn btn-primary" name="bid">Bid</button>
+                            </div>
+                        </div>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-4">
+            <image class="listing-image" src="{{ listing.image_link }}" alt="image"></image>
+        </div>
+    </div>
+{% endblock %}
