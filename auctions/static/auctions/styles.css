@@ -55,6 +55,10 @@ body {
     border: 3px solid black;
 }
 
+.margin-left {
+    margin-left: 10px;
+}
+
 .bidding-div-header {
     background-color: rgb(162, 162, 252);
     padding: 2px;
@@ -63,11 +67,39 @@ body {
 .bidding-div-body {
     background-color: rgb(223, 223, 255);
     padding: 5px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
 
 .bidding-place-bid {
     margin-top: auto;
     margin-bottom: auto;
-    margin: 5px;
+    margin: 10px;
+}
 
+.comment-div {
+    width: 60%;
+    background-color: rgb(162, 162, 252);
+    margin: 10px;
+    border: 3px solid black;
+}
+
+.comment-h5 {
+    margin: 5px;
+    font-size: 25px;
+}
+
+.comment {
+    margin: 10px;
+    padding: 10px;
+    background-color: rgb(208, 208, 255);
+}
+
+.comment-add {
+    margin: 5px;
+    padding: 5px;
+}
+
+.error{
+    margin: 10px;
 }

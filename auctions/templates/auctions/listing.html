@@ -11,13 +11,27 @@
         <div class="col-3">
             <div class="bidding-div">
                 <div class="bidding-div-header">
-                    Biddings:
+                    <h5 class="margin-left"><Strong>Starting bid: {{ listing.starting_bid }}</Strong></h5>
+                    <strong class="margin-left">Bids:</strong>
                 </div>
                 <div class="bidding-div-body">
                     {% for bid in bids %}
                         <p>{{ bid.user }}: {{ bid.amount }}</p>
+                    {% empty %}
+                        <br>
+                        <br>
+                        <br>
+                        <br>
                     {% endfor %}
                 </div>
+                {% if bid_message %}
+                <div class="error">
+                    <div class="alert alert-danger" role="alert">
+                        {{ bid_message }}
+                    </div>
+                </div>
+                
+                {% endif %}
                 <div class="bidding-place-bid">
                     <form action="{% url 'listing' listing.title %}" method="POST">
                         <div class="row">
@@ -37,5 +51,42 @@
         <div class="col-4">
             <image class="listing-image" src="{{ listing.image_link }}" alt="image"></image>
         </div>
+    </div>
+    <br>
+    <br>
+    <div class="comment-div">
+        <div class="bidding-div-header">
+            <h5 class="comment-h5">Comments:</h5>
+        </div>
+        <form action="{% url 'listing' listing.title %}" method="POST">
+            <div class="comment-add">
+                <div class="row">
+                    <div class="col-10">
+                        {% csrf_token %}
+                        {{ comment_form }}
+                    </div>
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-primary" name="comment">Comment</button>
+                    </div>
+                </div>
+            </div> 
+        </form>
+        {% if comment_message %}
+        <div class="error">
+            <div class="alert alert-danger" role="alert">
+                {{ comment_message }}
+            </div>
+        </div>
+        
+        {% endif %}
+
+        {% for comment in comments %}
+        <div class="comment">
+            <strong>{{ comment.user }}:</strong>
+            {{ comment.comment }}
+        </div>
+        {% empty %}
+
+        {% endfor %}
     </div>
 {% endblock %}

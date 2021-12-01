@@ -6,7 +6,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django import forms
 
-from .models import User, Listing, Bid
+from .models import Comment, User, Listing, Bid
 
 class NewListingForm(forms.ModelForm):
     class Meta:
@@ -29,6 +29,17 @@ class NewBidForm(forms.ModelForm):
 
         widgets = {
             'amount': forms.TextInput(attrs={'class': 'form-control'})
+        }
+
+class NewCommentForm(forms.ModelForm):
+    comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter comment here', 'rows': 1, 'cols': 85}), label="")
+
+    class Meta:
+        model = Comment
+        fields = ['comment']
+
+        widgets = {
+            'comment': forms.Textarea(attrs={'class': 'form-control'})
         }
     
 
@@ -103,16 +114,34 @@ def create(request):
     })
 
 def listing(request, requested_title):
+    context = {}
     if request.method == 'POST':
-        bid_form = NewBidForm(request.POST)
-        if bid_form.is_valid():
-            bid_form = bid_form.save(commit=False)
-            bid_form.user = request.user
-            bid_form.listing = Listing.objects.filter(title=requested_title).first()
-            bid_form.save()
-    bid_form = NewBidForm()
-    listing = Listing.objects.filter(title=requested_title)
-    bids = listing.first().bids.all()
-    return render(request, "auctions/listing.html", {
-        "listing": listing.first(), "bids": bids, "bid_form": bid_form
-    })
+        if 'bid'in request.POST:
+            if request.user.is_authenticated:
+                bid_form = NewBidForm(request.POST, prefix='bid')
+                if bid_form.is_valid():
+                    bid_form = bid_form.save(commit=False)
+                    bid_form.user = request.user
+                    bid_form.listing = Listing.objects.filter(title=requested_title).first()
+                    bid_form.save()
+            else:
+                context["bid_message"] = "You need to be logged in to place a bid"
+
+        elif 'comment' in request.POST:
+            if request.user.is_authenticated:
+                comment_form = NewCommentForm(request.POST, prefix='comment')
+                if comment_form.is_valid():
+                    comment_form = comment_form.save(commit=False)
+                    comment_form.user = request.user
+                    comment_form.listing = Listing.objects.filter(title=requested_title).first()
+                    comment_form.save()
+            else:
+                context["comment_message"] = "You need to be logged in to comment on this listing"
+
+    context["bid_form"] = NewBidForm(prefix='bid')
+    context["comment_form"] = NewCommentForm(prefix='comment')
+    listing = Listing.objects.filter(title=requested_title).first()
+    context["listing"] = listing
+    context["bids"] = listing.bids.all()
+    context["comments"] = listing.comments.all()
+    return render(request, "auctions/listing.html", context)
