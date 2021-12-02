@@ -65,7 +65,7 @@ def index(request):
             listing.starting_bid = get_highest_bid(listing.bids.all())
             listing.save()
     
-    context["listings"] = Listing.objects.all()
+    context["listings"] = Listing.objects.filter(active=True).all()
 
     return render(request, "auctions/index.html", context)
 
@@ -166,6 +166,11 @@ def listing(request, requested_title):
             listing.starting_bid = get_highest_bid(listing.bids.all())
             listing.save()
 
+    top_bid_user = Bid.objects.filter(amount=get_highest_bid(listing.bids.all())).first().user
+    
+    if request.user == top_bid_user and listing.active == False:
+        context["winning_message"] = "You have won this listing"
+
     context["bid_form"] = NewBidForm(prefix='bid')
     context["comment_form"] = NewCommentForm(prefix='comment')
     context["listing"] = listing
@@ -179,14 +184,15 @@ def listing(request, requested_title):
 def delete(request, listing_title):
     context = {}
     
-    listing_to_delete = Listing.objects.filter(title=listing_title).first()
-    listing_to_delete.delete()
-    
+    listing_to_deactivate = Listing.objects.filter(title=listing_title).first()
+    listing_to_deactivate.active = False
+    listing_to_deactivate.save()
+
     for listing in Listing.objects.all():
         if listing.bids.all():
             listing.starting_bid = get_highest_bid(listing.bids.all())
             listing.save()
     
-    context["listings"] = Listing.objects.all()
+    context["listings"] = Listing.objects.filter(active=True).all()
 
     return render(request, "auctions/index.html", context)

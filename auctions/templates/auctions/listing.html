@@ -4,9 +4,16 @@
 <div class="bodydiv">
     <h2>{{ listing.title }} </h2>
     {% if remove_listing %}
-        <a class="btn btn-primary" href="{% url 'delete' listing.title %}">Remove listing</a>
+        <a class="btn btn-primary" href="{% url 'delete' listing.title %}">Close listing</a>
     {% endif %}
     <hr>
+    {% if winning_message %}
+        <div class="error">
+            <div class="alert alert-success" role="alert">
+                {{ winning_message }}
+            </div>
+        </div>
+    {% endif%}
     <div class= "row">
         <div class="col-5">
             {{ listing.description }}
