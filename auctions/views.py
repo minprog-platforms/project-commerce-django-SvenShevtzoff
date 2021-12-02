@@ -52,6 +52,7 @@ def get_highest_bid(bids):
     
 
 def index(request):
+    context = {}
     if request.method == 'POST':
         form = NewListingForm(request.POST)
         if form.is_valid():
@@ -59,9 +60,14 @@ def index(request):
             form.user = request.user
             form.save()
 
-    return render(request, "auctions/index.html", {
-        "listings": Listing.objects.all()
-    })
+    for listing in Listing.objects.all():
+        if listing.bids.all():
+            listing.starting_bid = get_highest_bid(listing.bids.all())
+            listing.save()
+    
+    context["listings"] = Listing.objects.all()
+
+    return render(request, "auctions/index.html", context)
 
 
 def login_view(request):
@@ -153,9 +159,34 @@ def listing(request, requested_title):
             else:
                 context["comment_message"] = "You need to be logged in to comment on this listing"
 
+    if request.user == listing.user:
+        context["remove_listing"] = 1
+    
+    if listing.bids.all():
+            listing.starting_bid = get_highest_bid(listing.bids.all())
+            listing.save()
+
     context["bid_form"] = NewBidForm(prefix='bid')
     context["comment_form"] = NewCommentForm(prefix='comment')
     context["listing"] = listing
+    if listing.image_link != "":
+        context["image_link"] = listing.image_link
+    
     context["bids"] = listing.bids.all()
     context["comments"] = listing.comments.all()
     return render(request, "auctions/listing.html", context)
+
+def delete(request, listing_title):
+    context = {}
+    
+    listing_to_delete = Listing.objects.filter(title=listing_title).first()
+    listing_to_delete.delete()
+    
+    for listing in Listing.objects.all():
+        if listing.bids.all():
+            listing.starting_bid = get_highest_bid(listing.bids.all())
+            listing.save()
+    
+    context["listings"] = Listing.objects.all()
+
+    return render(request, "auctions/index.html", context)

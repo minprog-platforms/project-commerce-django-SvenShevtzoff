@@ -2,7 +2,10 @@
 
 {% block body %}
 <div class="bodydiv">
-    <h2>{{ listing.title }}</h2>
+    <h2>{{ listing.title }} </h2>
+    {% if remove_listing %}
+        <a class="btn btn-primary" href="{% url 'delete' listing.title %}">Remove listing</a>
+    {% endif %}
     <hr>
     <div class= "row">
         <div class="col-5">
@@ -11,14 +14,14 @@
         <div class="col-3">
             <div class="bidding-div">
                 <div class="bidding-div-header">
-                    <h5 class="margin-left"><Strong>Starting bid: {{ listing.starting_bid }}</Strong></h5>
+                    <h5 class="margin-left"><Strong>Current price: {{ listing.starting_bid }}</Strong></h5>
                     <strong class="margin-left">Bids:</strong>
                 </div>
                 <div class="bidding-div-body">
                     {% for bid in bids %}
                         <p>{{ bid.user }}: {{ bid.amount }}</p>
                     {% empty %}
-                        <br>
+                        <p>Be the first to bid on this Listing</p>
                         <br>
                         <br>
                         <br>
@@ -30,7 +33,6 @@
                         {{ bid_message }}
                     </div>
                 </div>
-                
                 {% endif %}
                 <div class="bidding-place-bid">
                     <form action="{% url 'listing' listing.title %}" method="POST">
@@ -49,7 +51,11 @@
             </div>
         </div>
         <div class="col-4">
+            {% if image_link %}
             <image class="listing-image" src="{{ listing.image_link }}" alt="image"></image>
+            {% else %}
+            <p>No image for this listing</p>
+            {% endif %}
         </div>
     </div>
     <br>
