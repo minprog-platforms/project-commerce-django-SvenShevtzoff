@@ -1,9 +1,10 @@
+from typing import List
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 class User(AbstractUser):
-    pass
+    watching = models.ManyToManyField("Listing", related_name="watched_by")
 
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
@@ -19,7 +20,7 @@ class Listing(models.Model):
 class Comment(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="comments")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
-    comment = models.CharField(max_length=1024)
+    comment = models.TextField()
 
 class Bid(models.Model):
     listing = models.ForeignKey(Listing, on_delete=models.CASCADE, related_name="bids")

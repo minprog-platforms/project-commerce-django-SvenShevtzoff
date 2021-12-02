@@ -21,25 +21,23 @@ class NewListingForm(forms.ModelForm):
         }
 
 class NewBidForm(forms.ModelForm):
-    amount = forms.IntegerField(widget=forms.TextInput(attrs={'placeholder':'Enter amount'}), label="")
-
     class Meta:
         model = Bid
         fields = ['amount']
+        labels = { "amount": ""}
 
         widgets = {
-            'amount': forms.TextInput(attrs={'class': 'form-control'})
+            'amount': forms.TextInput(attrs={'class': 'form-control', 'placeholder':'Enter amount'})
         }
 
 class NewCommentForm(forms.ModelForm):
-    comment = forms.CharField(widget=forms.Textarea(attrs={'placeholder': 'Enter comment here', 'rows': 1, 'cols': 85}), label="")
-
     class Meta:
         model = Comment
         fields = ['comment']
+        labels = {"comment": ""}
 
         widgets = {
-            'comment': forms.Textarea(attrs={'class': 'form-control'})
+            'comment': forms.Textarea(attrs={'class': 'form-control', 'class': 'form-control', 'placeholder': 'Enter comment here', 'rows': 1, 'cols': 85})
         }
 
 def get_highest_bid(bids):

@@ -103,3 +103,7 @@ body {
 .error{
     margin: 10px;
 }
+
+.closed-message {
+    margin: 5px;
+}

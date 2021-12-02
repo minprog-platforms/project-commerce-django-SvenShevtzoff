@@ -41,6 +41,7 @@
                     </div>
                 </div>
                 {% endif %}
+                {% if listing.active == True %}
                 <div class="bidding-place-bid">
                     <form action="{% url 'listing' listing.title %}" method="POST">
                         <div class="row">
@@ -53,8 +54,12 @@
                             </div>
                         </div>
                     </form>
-                    
                 </div>
+                {% else %}
+                <div class="bidding-place-bid">
+                    <p class="closed-message">This listing is closed</p>
+                </div>
+                {% endif %}
             </div>
         </div>
         <div class="col-4">
