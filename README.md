@@ -19,6 +19,9 @@ Listing Page:
 Create Listing Page:
 ![Create Listing](design_document/create_listing.jpeg)
 
+Watchlist Page:
+![Watchlist](design_document/watchlist.jpeg)
+
 Models used in this application:
 ![Models](design_document/models.jpeg)
 
