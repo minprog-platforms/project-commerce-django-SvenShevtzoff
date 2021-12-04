@@ -1,0 +1,28 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="bodydiv">
+    <h2>Watchlist</h2>
+    <hr>
+    {% for listing in watched_listings %}
+        <div class="index-listing">
+            <div class="index-info-div">
+                <h4><a href="{% url 'listing' listing.title %}">{{ listing.title}}</a></h4>
+                <hr>
+                <p><strong>Current price: </strong>{{ listing.starting_bid}}</p>
+                <p>{{ listing.description}}</p>
+            </div>
+            <div class="index-image-div">
+                {% if listing.image_link != "" %}
+                    <image class="index-image" src="{{ listing.image_link }}" alt="image"></image>
+                {% else %}
+                    <p>No image for this listing</p>
+                {% endif %}
+            </div>
+            
+        </div>
+    {% empty %}
+        <h3>No active listings</h3>
+    {% endfor %}
+</div>
+{% endblock %}

@@ -124,6 +124,12 @@ def listing(request, requested_title):
                     comment_form.save()
             else:
                 context["comment_message"] = "You need to be logged in to comment on this listing"
+        
+        elif 'watch' in request.POST:
+            if request.user.is_authenticated:
+                request.user.watching.add(listing)
+
+
 
     if request.user == listing.user:
         context["remove_listing"] = 1
@@ -163,3 +169,16 @@ def delete(request, listing_title):
     context["listings"] = Listing.objects.filter(active=True).all()
 
     return render(request, "auctions/index.html", context)
+
+def watchlist(request):
+    
+    for listing in Listing.objects.all():
+        if listing.bids.all():
+            listing.starting_bid = get_highest_bid(listing.bids.all())
+            listing.save()
+        
+    watched_listings = request.user.watching.all()
+    
+    return render(request, "auctions/watchlist.html", {
+        "watched_listings": watched_listings
+    })

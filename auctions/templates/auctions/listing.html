@@ -2,6 +2,12 @@
 
 {% block body %}
 <div class="bodydiv">
+    {% if user.is_authenticated %}
+    <form action="{% url 'listing' listing.title %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary" name="watch">Add to watchlist</button>
+    </form>
+    {% endif %}
     <h2>{{ listing.title }} </h2>
     {% if remove_listing %}
         <a class="btn btn-primary" href="{% url 'delete' listing.title %}">Close listing</a>

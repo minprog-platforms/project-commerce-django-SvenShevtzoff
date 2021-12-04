@@ -4,7 +4,7 @@ from django.db import models
 
 
 class User(AbstractUser):
-    watching = models.ManyToManyField("Listing", related_name="watched_by")
+    watching = models.ManyToManyField("Listing", blank=True, related_name="watched_by")
 
 class Listing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="listings")
